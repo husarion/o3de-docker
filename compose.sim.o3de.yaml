@@ -1,0 +1,21 @@
+# xhost +local:docker
+
+services:
+  o3de:
+    image: warehousetest
+    container_name: o3de_rosbot_xl
+    runtime: nvidia
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    network_mode: host
+    ipc: host
+    environment:
+      - DISPLAY=${DISPLAY:?err}
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+    entrypoint: /bin/bash
+
+    #! Necessary to source ros2 hunble before running editor
+    # /data/workspace/WarehouseTest/build/linux/bin/profile/Editor
