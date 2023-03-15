@@ -2,7 +2,7 @@
 
 services:
   o3de:
-    image: warehousetest
+    image: husarion/o3de
     container_name: o3de_rosbot_xl
     runtime: nvidia
     volumes:
@@ -13,9 +13,50 @@ services:
       - DISPLAY=${DISPLAY:?err}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
+
+    # command: /data/workspace/WarehouseTest/build/linux/bin/profile/Editor
+  
     stdin_open: true # docker run -i
     tty: true # docker run -t
     entrypoint: /bin/bash
 
     #! Necessary to source ros2 hunble before running editor
     # /data/workspace/WarehouseTest/build/linux/bin/profile/Editor
+  
+  rviz:
+    image: husarion/rviz2:galactic-8.5.2-20230204-stable
+    runtime: nvidia
+    container_name: rviz
+    network_mode: host
+    ipc: host
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./config/rosbot_xl.rviz:/root/.rviz2/default.rviz
+    environment:
+      - RMW_IMPLEMENTATION
+      - DISPLAY=${DISPLAY:?err}
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+
+  mapping:
+    image: husarion/slam-toolbox:humble-2.6.4-20230204-stable
+    network_mode: host
+    ipc: host
+    volumes:
+      - ./config/slam_toolbox_params.yaml:/slam_params.yaml
+    environment:
+      - RMW_IMPLEMENTATION
+    command: >
+      ros2 launch slam_toolbox online_sync_launch.py
+        slam_params_file:=/slam_params.yaml
+        use_sim_time:=True
+  
+  map-saver:
+    image: husarion/nav2-map-server:humble-1.1.5-20230204-stable
+    network_mode: host
+    ipc: host
+    volumes:
+      - ./maps:/maps
+    environment:
+      - RMW_IMPLEMENTATION
+    command: bash -c "while true; do ros2 run nav2_map_server map_saver_cli --free 0.15 --fmt png -f /maps/map; sleep 5; done"
