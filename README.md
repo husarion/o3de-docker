@@ -11,12 +11,5 @@ In a new terminal:
 ```bash
 docker exec -it o3de_rosbot_xl bash
 . /opt/ros/humble/setup.bash
-/data/workspace/WarehouseTest/build/linux/bin/profile/Editor
-```
-
-To run navigation demo, in a seperate terminal execute:
-```bash
-docker exec -it o3de_rosbot_xl bash
-. /opt/ros/humble/setup.bash
-ros2 launch /data/workspace/WarehouseTest/Examples/slam_navigation/launch/navigation.launch.py
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
