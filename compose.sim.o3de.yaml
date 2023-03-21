@@ -1,8 +1,24 @@
 # xhost +local:docker
 
 services:
-  o3de:
-    image: husarion/o3de:1.1.1
+  rviz:
+    image: husarion/rviz2:galactic-8.5.2-20230204-stable
+    runtime: nvidia
+    container_name: rviz
+    network_mode: host
+    ipc: host
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./config/rosbot_xl.rviz:/root/.rviz2/default.rviz
+      - ./config/rosbot_xl.urdf:/robot_models/rosbot_xl.urdf
+    environment:
+      - RMW_IMPLEMENTATION
+      - DISPLAY=${DISPLAY:?err}
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+
+  rosbot-xl:
+    image: husarion/o3de:1.0.0
     container_name: o3de_rosbot_xl
     runtime: nvidia
     volumes:
@@ -10,8 +26,32 @@ services:
     network_mode: host
     ipc: host
     environment:
+      - RMW_IMPLEMENTATION
       - DISPLAY=${DISPLAY:?err}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
 
-    command: bash -c "source /ros2_ws/install/setup.bash && ros2 launch rosbot_xl_o3de_slam slam.launch.py & /data/workspace/WarehouseTest/build/linux/bin/profile/Editor"
+    command: bash -c "ros2 run pointcloud_to_laserscan pointcloud_to_laserscan_node --ros-args -r cloud_in:=pc -r scan:=scan_filtered -p min_height:=0.0 -p max_height:=0.4 -p range_min:=0.05 -p use_sim_time:=True & /data/workspace/WarehouseTest/build/linux/bin/profile/Editor"
+  
+  mapping:
+    image: husarion/slam-toolbox:humble-2.6.4-20230204-stable
+    network_mode: host
+    ipc: host
+    volumes:
+      - ./config/slam_toolbox_params.yaml:/slam_params.yaml
+    environment:
+      - RMW_IMPLEMENTATION
+    command: >
+      ros2 launch slam_toolbox online_sync_launch.py
+        slam_params_file:=/slam_params.yaml
+        use_sim_time:=True
+  
+  map-saver:
+    image: husarion/nav2-map-server:humble-1.1.5-20230204-stable
+    network_mode: host
+    ipc: host
+    volumes:
+      - ./maps:/maps
+    environment:
+      - RMW_IMPLEMENTATION
+    command: bash -c "while true; do ros2 run nav2_map_server map_saver_cli --free 0.15 --fmt png -f /maps/map; sleep 5; done"
