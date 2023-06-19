@@ -1,5 +1,7 @@
 # o3de-docker
-O3DE simulation for Husarion robots
+O3DE simulation for Husarion robots.
+
+## ROSbot XL mapping demo
 
 Execution: 
 ```bash
@@ -7,9 +9,4 @@ xhost +local:docker
 docker compose -f compose.sim.o3de.yaml up
 ```
 
-In a new terminal:
-```bash
-docker exec -it o3de_rosbot_xl bash
-. /opt/ros/humble/setup.bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
-```
+Wait for the O3DE to load, then open `DemoLevel` and click the Play button (in the upper right corner) to start the simulation. Now you can use arrow keys to control the robot.
