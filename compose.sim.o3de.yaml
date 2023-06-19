@@ -18,7 +18,7 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=all
 
   rosbot-xl:
-    image: husarion/o3de:1.0.0
+    image: husarion/o3de:1.2.0
     container_name: o3de_rosbot_xl
     runtime: nvidia
     volumes:
@@ -31,7 +31,7 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
 
-    command: bash -c "ros2 run pointcloud_to_laserscan pointcloud_to_laserscan_node --ros-args -r cloud_in:=pc -r scan:=scan_filtered -p min_height:=0.0 -p max_height:=0.4 -p range_min:=0.05 -p use_sim_time:=True & /data/workspace/WarehouseTest/build/linux/bin/profile/Editor"
+    command: /data/workspace/ROSbotXLDemo/build/linux/bin/profile/Editor
   
   mapping:
     image: husarion/slam-toolbox:humble-2.6.4-20230204-stable
