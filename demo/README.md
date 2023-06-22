@@ -1,6 +1,6 @@
 # ROSbot XL mapping demo
 
-For a more detailed description check out [our tutorial](https://husarion.com/tutorials/other-tutorials/o3de-rosbot-xl-slam-toolbox/).
+For a more detailed description check out [our tutorial](https://husarion.com/tutorials/simulations/o3de-rosbot-xl-slam-toolbox/).
 
 Pulling Docker images:
 
