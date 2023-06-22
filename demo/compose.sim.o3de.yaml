@@ -19,7 +19,6 @@ services:
   rviz:
     image: husarion/rviz2:galactic-8.5.2-20230204-stable
     <<: [ *net-config, *gpu-config ]
-    container_name: rviz
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ./config/rosbot_xl.rviz:/root/.rviz2/default.rviz
@@ -28,7 +27,6 @@ services:
   rosbot-xl:
     image: husarion/o3de:1.2.0
     <<: [ *net-config, *gpu-config ]
-    container_name: o3de_rosbot_xl
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     command: /data/workspace/ROSbotXLDemo/build/linux/bin/profile/Editor
